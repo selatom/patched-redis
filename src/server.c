@@ -2432,6 +2432,18 @@ void initServerConfig(void) {
     server.orig_commands = dictCreate(&commandTableDictType);
     populateCommandTable();
 
+    /* Register QUEUESTATE command */
+    {
+        struct redisCommand *cmd = zcalloc(sizeof(struct redisCommand));
+        cmd->declared_name = "queuestate";
+        cmd->proc = queuestateCommand;
+        cmd->arity = -1;
+        cmd->flags = CMD_ADMIN | CMD_FAST;
+        cmd->acl_categories = ACL_CATEGORY_ADMIN;
+        cmd->fullname = sdsnew("queuestate");
+        dictAdd(server.commands, sdsnew("queuestate"), cmd);
+    }
+
     /* Debugging */
     server.watchdog_period = 0;
 }
